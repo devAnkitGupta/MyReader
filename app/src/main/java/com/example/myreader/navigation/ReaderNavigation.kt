@@ -12,7 +12,7 @@ fun ReaderNavigation() {
 
     val navController = rememberNavController()
     NavHost(navController = navController,
-        startDestination = ReaderScreens.SearchScreen.name,){
+        startDestination = ReaderScreens.SplashScreen.name,){
 
         composable(ReaderScreens.SplashScreen.name){
             ReaderSplashScreen(navController = navController)
@@ -20,8 +20,6 @@ fun ReaderNavigation() {
         composable(ReaderScreens.ReaderHomeScreen.name){
             ReaderHomeScreen(navController = navController)
         }
-        composable(ReaderScreens.ReaderHomeScreen.name){
-            ReaderHomeScreen(navController = navController)
-        } 
+
     }
 }

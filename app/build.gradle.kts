@@ -76,9 +76,12 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    ksp("com.google.dagger:dagger-compiler:2.48") // Dagger compiler
-    ksp("com.google.dagger:hilt-compiler:2.48")
+    ///DAGGER
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    ksp("com.google.dagger:dagger-compiler:2.48.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.48.1")
+
+    // Dagger compiler
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 

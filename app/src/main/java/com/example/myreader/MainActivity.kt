@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.myreader.navigation.ReaderNavigation
 import com.example.myreader.ui.theme.MyReaderTheme
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,21 +27,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyReaderTheme {
-            val db = FirebaseFirestore.getInstance()
-                val user: MutableMap<String,Any> = HashMap()
-                user["firstName"] = "Jeo"
-                user["lastName"] = "James"
-                db.collection("users").add(user)
-                    .addOnSuccessListener {
-                        Log.d("FB","OnCreate ${it.id}")
-                    }.addOnFailureListener {
-                        Log.d("FB","onCreate: $it")
-                    }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    ReaderApp("Android")
                 }
             }
         }
@@ -44,17 +40,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyReaderTheme {
-        Greeting("Android")
+fun ReaderApp(name: String, modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ReaderNavigation()
     }
 }
