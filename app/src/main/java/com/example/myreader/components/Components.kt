@@ -9,6 +9,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -26,6 +29,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,4 +97,53 @@ fun InputField(
             ),
         keyboardActions = onAction
         )
+}
+
+
+@Composable
+fun PasswordInput(
+    modifier: Any,
+    passwordState: MutableState<String>,
+    labelId: String, enabled: Boolean,
+    passwordVisibility: MutableState<Boolean>,
+    imeAction: ImeAction = ImeAction.Done,
+    onAction: KeyboardActions = KeyboardActions.Default
+) {
+
+    val visualTransformation = if(passwordVisibility.value) VisualTransformation.None else
+        PasswordVisualTransformation()
+    OutlinedTextField(
+        value = passwordState.value,
+        onValueChange = {
+            passwordState.value = it
+        },
+        label = { Text(text = labelId)},
+        singleLine = true,
+        textStyle = TextStyle(fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onBackground
+        ),
+        modifier = Modifier
+            .padding(
+                bottom = 10.dp
+
+            )
+            .fillMaxWidth(),
+        enabled = enabled,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = imeAction
+        ),
+        visualTransformation = visualTransformation,
+        trailingIcon = {
+            PasswordVisibility(passwordVisibility=passwordVisibility)
+        }
+    )
+}
+
+@Composable
+fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
+    val visible = passwordVisibility.value
+    IconButton(onClick = {passwordVisibility.value = !visible}){
+        Icons.Default.AcUnit
+    }
 }

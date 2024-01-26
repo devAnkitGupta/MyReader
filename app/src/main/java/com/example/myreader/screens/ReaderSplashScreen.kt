@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.myreader.components.ReaderLogo
 import com.example.myreader.navigation.ReaderScreens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,7 +46,12 @@ animationSpec = tween(durationMillis = 800,
   )
        )
      delay(2000L)
-    navController.navigate(ReaderScreens.LoginScreen.name)
+//
+     if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+       navController.navigate(ReaderScreens.LoginScreen.name)
+     }else{
+       navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+     }
 
    }
   
