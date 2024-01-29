@@ -1,6 +1,7 @@
 package com.example.myreader.screens.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -62,8 +63,12 @@ fun ReaderHomeScreen(navController: NavController = NavController(LocalContext.c
       topBar = {
   ReaderAppBar(title = "A.Reader", navController = navController)
       },
+
       floatingActionButton = {
-         FABContent{}
+          FABContent{
+              navController.navigate(ReaderScreens.SearchScreen.name)
+              Log.d("II","NAVIGATE TO SCERCH")
+          }
       }
    ) {
      Surface(modifier = Modifier.fillMaxSize()) {
@@ -141,6 +146,7 @@ fun BoolListArea(listOfBooks: List<MBook>, navController: NavController) {
   }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun HorizontalScrollableComponet(
     listOfBooks: List<MBook>,

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -202,8 +204,10 @@ fun TitleSection(
 @Composable
 fun ReaderAppBar(
     title: String,
+    icon: ImageVector? = null,
     showProfile: Boolean = true,
-    navController: NavController
+    navController: NavController,
+    onBackArrowClicked:() -> Unit = {}
 ){
     TopAppBar(
         title = {
@@ -218,6 +222,14 @@ fun ReaderAppBar(
                     )
                 }
                 Spacer(modifier = Modifier.width(20.dp))
+                if(icon != null){
+                    Icon(imageVector = icon, contentDescription = "arrow back",
+                        tint = Color.Red.copy(alpha = 0.7f),
+                        modifier = Modifier.clickable {
+                            onBackArrowClicked.invoke()
+                        }
+                        )
+                }
                 Text(text = title,
                     color = Color.Red.copy(alpha = 0.7f),
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -231,7 +243,14 @@ fun ReaderAppBar(
                 FirebaseAuth.getInstance().signOut().run {
                     navController.navigate(ReaderScreens.LoginScreen.name)
                 }}){
-                Icon(imageVector = Icons.Default.ChevronRight, contentDescription = "LogOut",)
+                if(showProfile) Row {
+                    Icon(imageVector = Icons.Default.ChevronRight, contentDescription = "LogOut",)
+
+                } else {
+                    Box {
+
+                    }
+                }
             }
 
         },
@@ -240,14 +259,14 @@ fun ReaderAppBar(
 
 
 @Composable
-fun FABContent(onTap: (String) -> Unit) {
-    FloatingActionButton(onClick = {onTap},
+fun FABContent(onTap: () -> Unit) {
+    FloatingActionButton(onClick = {onTap()},
         shape = RoundedCornerShape(50.dp),
         containerColor = Color(0xFF92CBDF)
     ) {
         Icon(imageVector = Icons.Default.Add,
             contentDescription ="Add a Book",
-            tint = MaterialTheme.colorScheme.onSecondary
+            tint = MaterialTheme.colorScheme.onSecondary,
         )
 
     }
