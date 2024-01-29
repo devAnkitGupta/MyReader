@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,6 +41,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.myreader.components.InputField
@@ -48,9 +50,11 @@ import com.example.myreader.model.MBook
 import com.example.myreader.navigation.ReaderScreens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview
 @Composable
-fun SearchScreen(navController: NavController = NavController(LocalContext.current)){
+fun SearchScreen(
+    navController: NavController,
+    viewModel: BookSearchViewModel
+                 ){
     Scaffold (topBar = {
         ReaderAppBar(title = "Search Books", navController = navController,
             icon = Icons.Default.ArrowBack,
@@ -68,12 +72,14 @@ fun SearchScreen(navController: NavController = NavController(LocalContext.curre
 SearchForm(
     modifier = Modifier
         .fillMaxWidth()
-        .padding(16.dp)
-){
-    Log.d("TAG","SearchScreen: $it")
+        .padding(16.dp),
+    viewModel = viewModel
+){query ->
+    viewModel.searchBooks(query = query)
+
 }
                 Spacer(modifier = Modifier.height(13.dp))
-                BookList(navController)
+                BookList(navController, viewModel)
             }
         }
     }
@@ -81,7 +87,16 @@ SearchForm(
 }
 
 @Composable
-fun BookList(navController: NavController) {
+fun BookList(
+    navController: NavController,
+    viewModel: BookSearchViewModel,
+    ) {
+    if(viewModel.listOfBooks.value.loading == true){
+        Log.d("TAG","BookList: LOADING")
+        CircularProgressIndicator()
+    } else {
+     Log.d("BOO", "BookList: ${viewModel.listOfBooks.value.data}")
+    }
     val listOfBooks = listOf(
         MBook(
             id = "asdf",
@@ -112,7 +127,6 @@ fun BookList(navController: NavController) {
        items(items = listOfBooks){ book ->
         BookRow(book, navController)
        }
-
    }
 }
 
@@ -132,8 +146,10 @@ Row (modifier = Modifier.padding(5.dp),
     ) {
    val imageUrl = "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
     Image(painter = rememberImagePainter(data = imageUrl), contentDescription = "",
-modifier = Modifier.width(80.dp)
-    .fillMaxHeight().padding(end = 4.dp)
+modifier = Modifier
+    .width(80.dp)
+    .fillMaxHeight()
+    .padding(end = 4.dp)
         )
     Column {
         Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
@@ -150,6 +166,7 @@ overflow = TextOverflow.Clip,
 @Composable
 fun SearchForm(
     modifier: Modifier = Modifier,
+    viewModel: BookSearchViewModel,
     loading: Boolean = false,
     hint: String = "Search",
     onSearch: (String) -> Unit = {}
