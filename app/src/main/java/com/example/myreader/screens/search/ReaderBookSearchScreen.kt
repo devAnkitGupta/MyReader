@@ -109,7 +109,9 @@ fun BookList(
 fun BookRow(book: Item, navController: NavController) {
   Card (
       modifier = Modifier
-          .clickable { }
+          .clickable {
+              navController.navigate(ReaderScreens.DetailsScreen.name + "/${book.id}")
+          }
           .fillMaxWidth()
           .height(100.dp)
           .padding(3.dp),
