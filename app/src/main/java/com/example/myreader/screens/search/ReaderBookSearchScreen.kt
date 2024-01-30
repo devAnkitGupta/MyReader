@@ -1,7 +1,6 @@
 package com.example.myreader.screens.search
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,8 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -36,17 +34,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.myreader.components.InputField
 import com.example.myreader.components.ReaderAppBar
-import com.example.myreader.model.MBook
+import com.example.myreader.model.Item
 import com.example.myreader.navigation.ReaderScreens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -91,47 +86,27 @@ fun BookList(
     navController: NavController,
     viewModel: BookSearchViewModel,
     ) {
-    if(viewModel.listOfBooks.value.loading == true){
-        Log.d("TAG","BookList: LOADING")
-        CircularProgressIndicator()
+
+    val listOfBooks = viewModel.list
+
+    if(viewModel.isLoading){
+        LinearProgressIndicator()
     } else {
-     Log.d("BOO", "BookList: ${viewModel.listOfBooks.value.data}")
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ){
+            items(items = listOfBooks){ book ->
+                BookRow(book, navController)
+            }
+        }
     }
-    val listOfBooks = listOf(
-        MBook(
-            id = "asdf",
-            title = "Running",
-            authors = "Me & You",
-            notes = "hello world",
-            photoUrl = "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
-        ),
-        MBook(
-            id = "asdf",
-            title = "Running",
-            authors = "Me & You",
-            notes = "hello world",
-            photoUrl = "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
-        ),
-        MBook(
-            id = "asdf",
-            title = "Running",
-            authors = "Me & You",
-            notes = "hello world",
-            photoUrl = "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
-        ),
-    )
-   LazyColumn(
-       modifier = Modifier.fillMaxSize(),
-       contentPadding = PaddingValues(16.dp)
-   ){
-       items(items = listOfBooks){ book ->
-        BookRow(book, navController)
-       }
-   }
+
 }
 
 @Composable
-fun BookRow(book: MBook, navController: NavController) {
+fun BookRow(book: Item, navController: NavController) {
   Card (
       modifier = Modifier
           .clickable { }
@@ -144,7 +119,11 @@ fun BookRow(book: MBook, navController: NavController) {
 Row (modifier = Modifier.padding(5.dp),
     verticalAlignment = Alignment.Top
     ) {
-   val imageUrl = "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
+   val imageUrl : String = if(book.volumeInfo.imageLinks.smallThumbnail.isEmpty())
+       "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg"
+    else {
+        book.volumeInfo.imageLinks.smallThumbnail
+   }
     Image(painter = rememberImagePainter(data = imageUrl), contentDescription = "",
 modifier = Modifier
     .width(80.dp)
@@ -152,8 +131,8 @@ modifier = Modifier
     .padding(end = 4.dp)
         )
     Column {
-        Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
-        Text(text = "Author: ${book.authors}",
+        Text(text = book.volumeInfo.title.toString(), overflow = TextOverflow.Ellipsis)
+        Text(text = "Author: ${book.volumeInfo.authors}",
 overflow = TextOverflow.Clip,
             style = MaterialTheme.typography.labelSmall
             )
