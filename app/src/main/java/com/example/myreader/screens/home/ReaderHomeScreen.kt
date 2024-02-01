@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,11 +29,14 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myreader.components.FABContent
@@ -153,6 +157,7 @@ fun BoolListArea(listOfBooks: List<MBook>, navController: NavController) {
 @Composable
 fun HorizontalScrollableComponet(
     listOfBooks: List<MBook>,
+    viewModel: HomeScreenViewModel = hiltViewModel(),
     onCardPress: (String) -> Unit) {
   val scrollState = rememberScrollState()
     Row(modifier = Modifier
@@ -160,11 +165,31 @@ fun HorizontalScrollableComponet(
         .heightIn(280.dp)
         .horizontalScroll(state = scrollState)
     ){
-       for (book in listOfBooks){
-           ListCard(book){
-            onCardPress(it)
+
+        if(viewModel.data.value.loading == true){
+            LinearProgressIndicator()
+        } else {
+           if(listOfBooks.isNullOrEmpty()){
+               Surface {
+                   Text(text = "No Books Found. Add a Book",
+                       style = TextStyle(
+                           color = Color.Red.copy(alpha = 0.4f),
+                           fontWeight = FontWeight.Bold,
+                           fontSize = 14.sp,
+                       )
+                       )
+
+               }
+           } else {
+               for (book in listOfBooks){
+                   ListCard(book){
+                       onCardPress(it)
+                   }
+               }
            }
-       }
+        }
+
+
     }
 }
 
